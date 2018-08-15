@@ -31,3 +31,10 @@ BEGIN
    END IF;
 END;
 $$ language 'plpgsql';
+
+CREATE TRIGGER
+update_modified_column
+BEFORE UPDATE ON
+products
+FOR EACH ROW EXECUTE PROCEDURE
+update_modified_column();
