@@ -18,7 +18,7 @@ public class DatabaseManager {
     private String host, username, password, database;
     private int port;
     
-    DatabaseManager(String host, int port, String username, String password, String database) throws ClassNotFoundException {
+    DatabaseManager(String host, int port, String username, String password, String database) throws ClassNotFoundException, SQLException {
        this.host = host;
        this.port = port;
        this.username = username;
@@ -33,6 +33,8 @@ public class DatabaseManager {
        {
            throw new ClassNotFoundException("PostgreSQL JDBC driver NOT detected in library path.", e);
        }
+       
+       Connect();
     }
     
     public void Connect() throws SQLException {
@@ -54,7 +56,7 @@ public class DatabaseManager {
         }
     }
     
-    public int Test() {
-        return 1;
+    public Connection getConnection() {
+        return connection;
     }
 }
