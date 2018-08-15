@@ -29,6 +29,7 @@ public class JuhlaMokka {
                 "juhlamokka"
         );
         
-        db.Connect();
+        CLIFrontend fe = new CLIFrontend();
+        fe.start();
     }
 }

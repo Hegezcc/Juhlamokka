@@ -34,10 +34,10 @@ public class DatabaseManager {
            throw new ClassNotFoundException("PostgreSQL JDBC driver NOT detected in library path.", e);
        }
        
-       Connect();
+       connect();
     }
     
-    public void Connect() throws SQLException {
+    private void connect() throws SQLException {
         try {
             String url = String.format("jdbc:postgresql://%s/%s", host, database);
             
