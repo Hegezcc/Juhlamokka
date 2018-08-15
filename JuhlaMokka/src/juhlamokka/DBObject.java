@@ -127,13 +127,4 @@ public abstract class DBObject {
     public Date getModifiedOn() {
         return modifiedOn;
     }
-    
-    /**
-     * The constructor of class
-     * @param id
-     */
-    public DBObject(Integer id) {
-        //DatabaseManager manager = new DatabaseManager().getInstance();
-        
-    }
 }
