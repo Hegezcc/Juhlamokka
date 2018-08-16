@@ -1,17 +1,28 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package juhlamokka;
 
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
- *
- * @author s1800580
+ * An abstract database object. Other objects are inherited of this
  */
 public abstract class DBObject {
+    
+    /**
+     * Holds the Connection for database
+     */
+    protected Connection db;
+    
+    /**
+     * Shows which fields of object are updateable
+     */
+    protected ArrayList<String> fields = new ArrayList<>(Arrays.asList(
+            "name", "description"
+    ));
+
+    protected ArrayList<String> changedFields = new ArrayList<>();
 
     /**
      * Object id, used for database purposes (created by database)
@@ -67,16 +78,19 @@ public abstract class DBObject {
         
         // Handle the possible null value: user may want to clear the name
         if (newName == null) {
-            name = null;
+            this.name = null;
             return;
         }
         
         // We better throw out an exception to ensure database will not do that
         if (newName.length() > maxLength) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("New name is too long!");
         }
         
-        name = newName;
+        // Add for updation
+        changedFields.add("name");
+
+        this.name = newName;
     }
     
     /**
@@ -100,16 +114,18 @@ public abstract class DBObject {
         // Handle the possible null value: user may want to clear
         // the description
         if (newDescription == null) {
-            description = null;
+            this.description = null;
             return;
         }
         
         // We better throw out an exception to ensure database will not do that
         if (newDescription.length() > maxLength) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("New description is too long!");
         }
+        // Add for updation
+        changedFields.add("description");
         
-        description = newDescription;
+        this.description = newDescription;
     }
     
     /**
@@ -126,5 +142,38 @@ public abstract class DBObject {
      */
     public Date getModifiedOn() {
         return modifiedOn;
+    }
+    
+    /**
+     * Add new parameters to be searched in database for returning object
+     * @param adds
+     */
+    protected void addFields(ArrayList<String> adds) {
+        adds.forEach((String x) -> {
+           if (!this.fields.contains(x)) {
+               this.fields.add(x);
+           }
+        });
+    }
+    
+    /**
+     * Save changes of object to database
+     */
+    protected void save() {
+        
+    }
+    
+    /**
+     * Delete the object from database
+     */
+    protected void delete() {
+        
+    }
+    
+    /**
+     * Read the object from database and initialize its properties
+     */
+    protected void read() {
+        
     }
 }
