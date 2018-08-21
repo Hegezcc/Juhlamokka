@@ -28,7 +28,7 @@ public class Product extends DBObject {
         this.db = db;
         this.id = id;
         
-        // Read the rest from db
+        // Read the rest of data from db
         read();
     }
     

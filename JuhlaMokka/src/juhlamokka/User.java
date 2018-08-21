@@ -1,17 +1,61 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package juhlamokka;
 
 import defuse.passwordhashing.PasswordStorage;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *
- * @author s1800580
+ * A user object
  */
 public class User extends DBObject {
+    /**
+     * Shows which fields of object are updateable
+     */
+    protected ArrayList<String> ownFields = new ArrayList<>(Arrays.asList(
+            "password", "admin", "locked"
+    ));
+    
+    /**
+     * Get a product by its identifier
+     * @param id
+     * @param db
+     */
+    public User(Integer id, Connection db) {
+        addFields(this.ownFields);
+        
+        this.db = db;
+        this.id = id;
+        
+        // Read the rest of data from db
+        read();
+    }
+    
+    /**
+     * Create a new product
+     * @param name
+     * @param description
+     * @param password
+     * @param admin
+     * @param locked
+     * @param db
+     */
+    public User(String name, String description, String password, Boolean admin,
+            Boolean locked, Connection db) {
+        addFields(this.ownFields);
+        
+        // We are creating a new object, set properties
+        this.db = db;
+        this.name = name;
+        this.description = description;
+        this.password = password;
+        this.admin = admin;
+        this.locked = locked;
+    }
+    
     /**
      * Password hash of the users password, created with a library
      */
@@ -47,8 +91,33 @@ public class User extends DBObject {
         return PasswordStorage.verifyPassword(pwd, this.password);
     }
     
+    /**
+     * Set the password
+     * May log an CannotPerformOperationException if system is unsafe for crypto
+     * @param pwd
+     * @throws IllegalArgumentException
+     */
     public void setPassword(char[] pwd) throws IllegalArgumentException {
+        if (pwd.length <= 0) {
+            throw new IllegalArgumentException("A password must be specified!");
+        }
+
+        // Password checking guidelines
+        // TODO: implement configuration variables and haveibeenpwned api
         
+        try {
+            // This may throw an exception
+            this.password = PasswordStorage.createHash(pwd);
+            
+            // Add this after possible exception has been thrown
+            this.changedFields.add("password");
+            
+        } catch (PasswordStorage.CannotPerformOperationException ex) {
+            // This is run if something in the system is not secure for crypto
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, 
+                    "Cannot save password! " + 
+                    "Something is wrong within this system.", ex);
+        }
     }
     
     /**
