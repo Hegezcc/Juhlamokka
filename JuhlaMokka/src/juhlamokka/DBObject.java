@@ -1,13 +1,16 @@
 package juhlamokka;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static juhlamokka.DBOperation.getKeyValuePairs;
 import static juhlamokka.DBOperation.getKeysAndValues;
 import static juhlamokka.DBOperation.prepareSQLMarkup;
 
@@ -166,11 +169,31 @@ public abstract class DBObject {
         });
     }
     
+    public static boolean set(
+            Object object, String fieldName, Object fieldValue) {
+    Class<?> clazz = object.getClass();
+    while (clazz != null) {
+        try {
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(object, fieldValue);
+            return true;
+        } catch (NoSuchFieldException e) {
+            clazz = clazz.getSuperclass();
+        } catch (
+                SecurityException | 
+                IllegalAccessException | 
+                IllegalArgumentException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+    return false;
+}
+    
     /**
      * Insert new object to database
      */
     protected void create() {
-        
         // Keys and values as strings (used for SQL clause creation)
         String[] kvs = getKeysAndValues(this.fields);
         String keys = kvs[0];
@@ -178,40 +201,107 @@ public abstract class DBObject {
         
         // Only log errors, don't crash the program
         try {
+            // Prepare the statement
             PreparedStatement q = db.prepareStatement(
                     "insert into " + this.tableName + " (" + keys +
                     ") values (" + values + ")"
             );
             
+            // Prepare the attributes
             q = prepareSQLMarkup(this, q, this.fields);
             
+            // Inject SQL code to DB
             q.executeUpdate();
         } catch (SQLException ex) {
+            // Handle exceptions
             Logger.getLogger(
                     DBObject.class.getName()
             ).log(Level.SEVERE, null, ex);
         }
-        
     }
     
     /**
      * Read the object from database and initialize its properties
      */
     protected void read() {
+        // Keys as string (used for SQL clause creation)
+        String keys = getKeysAndValues(this.fields)[0];
         
+        // Only log errors, don't crash the program
+        try {
+            // Prepare the statement
+            PreparedStatement q = db.prepareStatement(
+                    "select " + keys + " from " + this.tableName + 
+                    " where id = " + this.id + " limit 1"
+            );
+            
+            // Prepare the attributes
+            q = prepareSQLMarkup(this, q, this.fields);
+            
+            // Inject SQL code to DB and get some payload from there
+            ResultSet rs = q.executeQuery();
+            
+            for (String field : this.fields) {
+                set(this, field, rs.getObject(field));
+            }
+        } catch (SQLException ex) {
+            // Handle exceptions
+            Logger.getLogger(
+                    DBObject.class.getName()
+            ).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
      * Save changes of object to database
      */
     protected void update() {
+        // Keys and values as strings (used for SQL clause creation)
+        String pairs = getKeyValuePairs(this.changedFields);
         
+        // Only log errors, don't crash the program
+        try {
+            // Prepare the statement
+            PreparedStatement q = db.prepareStatement(
+                    "update " + this.tableName + " set " + pairs +
+                    " where id = " + this.id + " limit 1"
+            );
+            
+            // Prepare the attributes
+            q = prepareSQLMarkup(this, q, this.changedFields);
+            
+            // Inject SQL code to DB
+            q.executeUpdate();
+        } catch (SQLException ex) {
+            // Handle exceptions
+            Logger.getLogger(
+                    DBObject.class.getName()
+            ).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
      * Delete the object from database
      */
     protected void delete() {
-        
+        // Only log errors, don't crash the program
+        try {
+            // Prepare the statement
+            PreparedStatement q = db.prepareStatement(
+                    "delete from " + this.tableName + 
+                    " where id = " + this.id + " limit 1"
+            );
+            
+            // Prepare the attributes
+            q = prepareSQLMarkup(this, q, this.changedFields);
+            
+            // Inject SQL code to DB
+            q.executeUpdate();
+        } catch (SQLException ex) {
+            // Handle exceptions
+            Logger.getLogger(
+                    DBObject.class.getName()
+            ).log(Level.SEVERE, null, ex);
+        }
     }
 }

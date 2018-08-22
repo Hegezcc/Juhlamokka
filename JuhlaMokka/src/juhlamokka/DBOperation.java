@@ -75,7 +75,7 @@ public class DBOperation {
         return null;
     }
     
-    public static String[] getKeysAndValues(ArrayList fields) {
+    public static String[] getKeysAndValues(ArrayList<String> fields) {
         String keys = String.join(", ", fields);
         String values = "";
         
@@ -91,13 +91,38 @@ public class DBOperation {
         return new String[] {keys, values};
     }
     
+    public static String getKeyValuePairs(ArrayList<String> fields) {
+        ArrayList<String> pairs = new ArrayList();
+        
+        for (String field : fields) {
+            pairs.add(field + " = ?");
+        }
+        
+        return String.join(", ", pairs);
+    }
+    
     public static PreparedStatement prepareSQLMarkup(
             Object obj, PreparedStatement q, ArrayList fields) 
-            throws NoSuchFieldException, IllegalAccessException, SQLException {
+            throws SQLException {
         
         for (int i = 0; i < fields.size(); i++) {
             String key = (String) fields.get(i);
-            q.setObject(i, obj.getClass().getDeclaredField(key).get(obj));
+            
+            // Test if we had this value on our object: if not, set it null
+            Object value;
+            try {
+                value = obj.getClass().getDeclaredField(key).get(obj);
+            } catch (
+                    NoSuchFieldException | 
+                    SecurityException | 
+                    IllegalArgumentException | 
+                    IllegalAccessException ex) {
+                Logger.getLogger(DBOperation.class.getName()).log(Level.WARNING, null, ex);
+
+                value = null;
+            }
+            
+            q.setObject(i, value);
         }
         
         return q;
