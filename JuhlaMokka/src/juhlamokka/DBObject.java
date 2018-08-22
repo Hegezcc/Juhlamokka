@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static juhlamokka.DBOperation.getKeysAndValues;
+import static juhlamokka.DBOperation.prepareSQLMarkup;
 
 /**
  * An abstract database object. Other objects are inherited of this
@@ -164,51 +166,30 @@ public abstract class DBObject {
         });
     }
     
-    private String[] getKeysAndValues(ArrayList fields) {
-        String keys = String.join(", ", fields);
-        String values = "";
-        
-        // Get a string with as many question marks that there are fields
-        if (fields.size() >= 1) {
-            values = "?";
-            
-            for (int i = 1; i < fields.size(); i++) {
-                values += ", ?";
-            }
-        }
-        
-        return new String[] {keys, values};
-    }
-    
-    private PreparedStatement prepareSQLMarkup(
-            PreparedStatement q, ArrayList fields) 
-            throws NoSuchFieldException, IllegalAccessException, SQLException {
-        
-        for (int i = 0; i < fields.size(); i++) {
-            String key = (String) fields.get(i);
-            q.setObject(i, this.getClass().getDeclaredField(key).get(this));
-        }
-        
-        return q;
-    }
-    
     /**
      * Insert new object to database
      */
     protected void create() {
         
-        // Keys and values
+        // Keys and values as strings (used for SQL clause creation)
         String[] kvs = getKeysAndValues(this.fields);
         String keys = kvs[0];
         String values = kvs[1];
         
+        // Only log errors, don't crash the program
         try {
             PreparedStatement q = db.prepareStatement(
                     "insert into " + this.tableName + " (" + keys +
-                            ") values (" + values + ")"
+                    ") values (" + values + ")"
             );
+            
+            q = prepareSQLMarkup(this, q, this.fields);
+            
+            q.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(DBObject.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(
+                    DBObject.class.getName()
+            ).log(Level.SEVERE, null, ex);
         }
         
     }
