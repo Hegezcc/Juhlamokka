@@ -5,9 +5,13 @@
  */
 package juhlamokka;
 
+<<<<<<< HEAD
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+=======
+import java.sql.PreparedStatement;
+>>>>>>> 35d0f8ee390ee686e0f10ef47eeb541c7acc6137
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,5 +76,33 @@ public class DBOperation {
         }
         
         return null;
+    }
+    
+    public static String[] getKeysAndValues(ArrayList fields) {
+        String keys = String.join(", ", fields);
+        String values = "";
+        
+        // Get a string with as many question marks that there are fields
+        if (fields.size() >= 1) {
+            values = "?";
+            
+            for (int i = 1; i < fields.size(); i++) {
+                values += ", ?";
+            }
+        }
+        
+        return new String[] {keys, values};
+    }
+    
+    public static PreparedStatement prepareSQLMarkup(
+            Object obj, PreparedStatement q, ArrayList fields) 
+            throws NoSuchFieldException, IllegalAccessException, SQLException {
+        
+        for (int i = 0; i < fields.size(); i++) {
+            String key = (String) fields.get(i);
+            q.setObject(i, obj.getClass().getDeclaredField(key).get(obj));
+        }
+        
+        return q;
     }
 }
