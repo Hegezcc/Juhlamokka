@@ -25,12 +25,10 @@ public class User extends DBObject {
      * @param db
      */
     public User(Integer id, Connection db) {
-        addFields(this.ownFields);
+        init();
         
         this.db = db;
         this.id = id;
-        
-        init();
         
         // Read the rest of data from db
         read();
@@ -47,7 +45,7 @@ public class User extends DBObject {
      */
     public User(String name, String description, String password, Boolean admin,
             Boolean locked, Connection db) {
-        addFields(this.ownFields);
+        init();
         
         // We are creating a new object, set properties
         this.db = db;
@@ -57,17 +55,40 @@ public class User extends DBObject {
         this.admin = admin;
         this.locked = locked;
         
-        init();
-        
         // Add the object to database
         create();
+    }
+    
+    /**
+     * Instantiate a user with known info
+     * @param id
+     * @param name
+     * @param description
+     * @param password
+     * @param admin
+     * @param locked
+     * @param db
+     */
+    public User (Integer id, String name, String description, String password, 
+            Boolean admin, Boolean locked, Connection db) {
+        init();
+        
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.password = password;
+        this.admin = admin;
+        this.locked = locked;
+        this.db = db;
     }
     
     /**
      * Do some common initialization for object
      */
     private void init() {
-        this.tableName = "products";
+        this.tableName = "users";
+        
+        addFields(this.ownFields);
     }
     
     /**

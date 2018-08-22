@@ -22,12 +22,10 @@ public class Transaction extends DBObject {
      * @param db
      */
     public Transaction(Integer id, Connection db) {
-        addFields(this.ownFields);
+        init();
         
         this.db = db;
         this.id = id;
-        
-        init();
         
         // Read the rest of data from db
         read();
@@ -46,7 +44,7 @@ public class Transaction extends DBObject {
      */
     public Transaction(String name, String description, Product product,
             User user, Client client, Integer amount, BigDecimal price, Connection db) {
-        addFields(this.ownFields);
+        init();
         
         // We are creating a new object, set properties
         this.db = db;
@@ -58,17 +56,44 @@ public class Transaction extends DBObject {
         this.amount = amount;
         this.price = price;
         
-        init();
-        
         // Add the object to database
         create();
+    }
+    
+    /**
+     * Instantiate a transaction with known info
+     * @param id
+     * @param name
+     * @param description
+     * @param product
+     * @param user
+     * @param client
+     * @param amount
+     * @param price
+     * @param db
+     */
+    public Transaction(Integer id, String name, String description, Product product,
+            User user, Client client, Integer amount, BigDecimal price, Connection db) {
+        init();
+        
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.product = product;
+        this.user = user;
+        this.client = client;
+        this.amount = amount;
+        this.price = price;
+        this.db = db;
     }
     
     /**
      * Do some common initialization for object
      */
     private void init() {
-        this.tableName = "products";
+        this.tableName = "transactions";
+        
+        init();
     }
     
     /**

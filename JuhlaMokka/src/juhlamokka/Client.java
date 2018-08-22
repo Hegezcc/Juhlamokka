@@ -38,23 +38,39 @@ public class Client extends DBObject {
      * @param db
      */
     public Client(String name, String description, Connection db) {
-        addFields(this.ownFields);
+        init();
         
         // We are creating a new object, set properties
         this.db = db;
         this.name = name;
         this.description = description;
         
-        init();
-        
         // Add the object to database
         create();
+    }
+    
+    /**
+     * Instantiate a client with known info
+     * @param id
+     * @param name
+     * @param description
+     * @param db
+     */
+    public Client(Integer id, String name, String description, Connection db) {
+        init();
+        
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.db = db;
     }
     
     /**
      * Do some common initialization for object
      */
     private void init() {
-        this.tableName = "products";
+        this.tableName = "clients";
+        
+        addFields(this.ownFields);
     }
 }

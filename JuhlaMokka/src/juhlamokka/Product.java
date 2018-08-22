@@ -23,12 +23,10 @@ public class Product extends DBObject {
      * @param db
      */
     public Product(Integer id, Connection db) {
-        addFields(this.ownFields);
+        init();
         
         this.db = db;
         this.id = id;
-        
-        init();
         
         // Read the rest of data from db
         read();
@@ -45,7 +43,7 @@ public class Product extends DBObject {
      */
     public Product(String name, String description, BigDecimal basePrice, 
             Integer amount, String unit, Connection db) {
-        addFields(this.ownFields);
+        init();
         
         // We are creating a new object, set properties
         this.db = db;
@@ -55,10 +53,31 @@ public class Product extends DBObject {
         this.amount = amount;
         this.unit = unit;
         
-        init();
-        
         // Add the object to database
         create();
+    }
+    
+    /**
+     * Instantiate a product with known info
+     * @param id
+     * @param name
+     * @param description
+     * @param basePrice
+     * @param amount
+     * @param unit
+     * @param db
+     */
+    public Product(Integer id, String name, String description, BigDecimal basePrice, 
+            Integer amount, String unit, Connection db) {
+        init();
+        
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.basePrice = basePrice;
+        this.amount = amount;
+        this.unit = unit;
+        this.db = db;
     }
     
     /**
@@ -66,6 +85,8 @@ public class Product extends DBObject {
      */
     private void init() {
         this.tableName = "products";
+        
+        addFields(this.ownFields);
     }
     
     /**
