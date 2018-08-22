@@ -8,15 +8,48 @@ CREATE DATABASE juhlamokka
     TABLESPACE = pg_default
     CONNECTION LIMIT = -1;
 
-/* Create basic table */
+/* Create products table */
 CREATE TABLE IF NOT EXISTS products (
   id            SERIAL PRIMARY KEY,   /* Autoincrement */
-  name          VARCHAR(255) NOT NULL UNIQUE,
+  name          varchar(255) NOT NULL UNIQUE,
   description   text NULL,
-  baseprice     decimal(12, 2),
-  quantity      int,
+  basePrice     decimal(12, 2),
+  amount	      int,
+  unit			    varchar(255) NOT NULL,
   addedOn       timestamp NOT NULL DEFAULT now(),
   modifiedOn    timestamp NOT NULL DEFAULT now()
+);
+
+/* Create users table */
+CREATE TABLE IF NOT EXISTS users (
+  id            SERIAL PRIMARY KEY,   /* Autoincrement */
+  name          varchar(255) NOT NULL UNIQUE,
+  password      varchar(255) NOT NULL,
+  description   text NULL,
+  locked	      BOOLEAN NOT NULL DEFAULT FALSE,
+  addedOn       timestamp NOT NULL DEFAULT now(),
+  modifiedOn    timestamp NOT NULL DEFAULT now()
+);
+
+/* Create clients table */
+CREATE TABLE IF NOT EXISTS clients (
+  id            SERIAL PRIMARY KEY,   /* Autoincrement */
+  name          varchar(255) NOT NULL UNIQUE,
+  description   text NULL,
+  addedOn       timestamp NOT NULL DEFAULT now(),
+  modifiedOn    timestamp NOT NULL DEFAULT now()
+);
+
+/* Create transactions table */
+CREATE TABLE IF NOT EXISTS transactions (
+  id            SERIAL PRIMARY KEY,   /* Autoincrement */
+  userid        integer REFERENCES users(id) ON DELETE SET NULL,
+  clientid      integer REFERENCES clients(id) ON DELETE SET NULL,
+  description   text NULL,
+  productid     integer REFERENCES products(id) ON DELETE SET NULL,
+  amount	      int,
+  price         decimal(12, 2),
+  addedOn       timestamp NOT NULL DEFAULT now()
 );
 
 /* When updated update updatedOn time */
@@ -32,9 +65,8 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-CREATE TRIGGER
-update_modified_column
-BEFORE UPDATE ON
-products
-FOR EACH ROW EXECUTE PROCEDURE
-update_modified_column();
+/* Create triggers for modifiedOn */
+CREATE TRIGGER update_modified_column BEFORE UPDATE ON products FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+CREATE TRIGGER update_modified_column BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+CREATE TRIGGER update_modified_column BEFORE UPDATE ON clients FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+CREATE TRIGGER update_modified_column BEFORE UPDATE ON transactions FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
