@@ -19,6 +19,9 @@ public class JuhlaMokka {
             "juhlamokka"
         );
         
+        DBOperation dbo = new DBOperation(db.getConnection());
+        dbo.getProducts();
+        
         //CLIFrontend fe = new CLIFrontend();
         //fe.start();
     }
