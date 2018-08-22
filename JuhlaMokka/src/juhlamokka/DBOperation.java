@@ -5,13 +5,10 @@
  */
 package juhlamokka;
 
-<<<<<<< HEAD
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-=======
 import java.sql.PreparedStatement;
->>>>>>> 35d0f8ee390ee686e0f10ef47eeb541c7acc6137
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
