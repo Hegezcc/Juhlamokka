@@ -11,17 +11,15 @@ public class JuhlaMokka {
      */
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
-        System.out.println("Hello World");
-        
         DatabaseManager db = new DatabaseManager(
-                "juhlamokkacomputing.postgres.database.azure.com",
-                5432,
-                "juhlamokka@juhlamokkacomputing",
-                "computing4523!",
-                "juhlamokka"
+            "juhlamokkacomputing.postgres.database.azure.com",
+            5432,
+            "juhlamokka@juhlamokkacomputing",
+            "computing4523!",
+            "juhlamokka"
         );
         
-        CLIFrontend fe = new CLIFrontend();
-        fe.start();
+        //CLIFrontend fe = new CLIFrontend();
+        //fe.start();
     }
 }
