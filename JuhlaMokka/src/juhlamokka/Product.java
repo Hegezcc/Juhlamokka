@@ -28,6 +28,8 @@ public class Product extends DBObject {
         this.db = db;
         this.id = id;
         
+        init();
+        
         // Read the rest of data from db
         read();
     }
@@ -52,6 +54,18 @@ public class Product extends DBObject {
         this.basePrice = basePrice;
         this.amount = amount;
         this.unit = unit;
+        
+        init();
+        
+        // Add the object to database
+        create();
+    }
+    
+    /**
+     * Do some common initialization for object
+     */
+    private void init() {
+        this.tableName = "products";
     }
     
     /**

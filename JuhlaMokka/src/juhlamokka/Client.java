@@ -25,6 +25,8 @@ public class Client extends DBObject {
         this.db = db;
         this.id = id;
         
+        init();
+        
         // Read the rest of data from db
         read();
     }
@@ -42,5 +44,17 @@ public class Client extends DBObject {
         this.db = db;
         this.name = name;
         this.description = description;
+        
+        init();
+        
+        // Add the object to database
+        create();
+    }
+    
+    /**
+     * Do some common initialization for object
+     */
+    private void init() {
+        this.tableName = "products";
     }
 }

@@ -27,6 +27,8 @@ public class Transaction extends DBObject {
         this.db = db;
         this.id = id;
         
+        init();
+        
         // Read the rest of data from db
         read();
     }
@@ -55,8 +57,19 @@ public class Transaction extends DBObject {
         this.client = client;
         this.amount = amount;
         this.price = price;
+        
+        init();
+        
+        // Add the object to database
+        create();
     }
     
+    /**
+     * Do some common initialization for object
+     */
+    private void init() {
+        this.tableName = "products";
+    }
     
     /**
      * The user object representing the handler of transaction

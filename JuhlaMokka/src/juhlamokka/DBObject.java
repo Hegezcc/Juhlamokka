@@ -1,19 +1,27 @@
 package juhlamokka;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An abstract database object. Other objects are inherited of this
  */
 public abstract class DBObject {
-    
     /**
      * Holds the Connection for database
      */
     protected Connection db;
+    
+    /**
+     * The table name for what will be used for saving object, set on init()
+     */
+    protected String tableName;
     
     /**
      * Shows which fields of object are updateable
@@ -156,10 +164,52 @@ public abstract class DBObject {
         });
     }
     
+    private String[] getKeysAndValues(ArrayList fields) {
+        String keys = String.join(", ", fields);
+        String values = "";
+        
+        // Get a string with as many question marks that there are fields
+        if (fields.size() >= 1) {
+            values = "?";
+            
+            for (int i = 1; i < fields.size(); i++) {
+                values += ", ?";
+            }
+        }
+        
+        return new String[] {keys, values};
+    }
+    
+    private PreparedStatement prepareSQLMarkup(
+            PreparedStatement q, ArrayList fields) 
+            throws NoSuchFieldException, IllegalAccessException, SQLException {
+        
+        for (int i = 0; i < fields.size(); i++) {
+            String key = (String) fields.get(i);
+            q.setObject(i, this.getClass().getDeclaredField(key).get(this));
+        }
+        
+        return q;
+    }
+    
     /**
      * Insert new object to database
      */
     protected void create() {
+        
+        // Keys and values
+        String[] kvs = getKeysAndValues(this.fields);
+        String keys = kvs[0];
+        String values = kvs[1];
+        
+        try {
+            PreparedStatement q = db.prepareStatement(
+                    "insert into " + this.tableName + " (" + keys +
+                            ") values (" + values + ")"
+            );
+        } catch (SQLException ex) {
+            Logger.getLogger(DBObject.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }
     

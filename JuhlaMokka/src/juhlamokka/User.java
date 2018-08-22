@@ -30,6 +30,8 @@ public class User extends DBObject {
         this.db = db;
         this.id = id;
         
+        init();
+        
         // Read the rest of data from db
         read();
     }
@@ -54,6 +56,18 @@ public class User extends DBObject {
         this.password = password;
         this.admin = admin;
         this.locked = locked;
+        
+        init();
+        
+        // Add the object to database
+        create();
+    }
+    
+    /**
+     * Do some common initialization for object
+     */
+    private void init() {
+        this.tableName = "products";
     }
     
     /**
