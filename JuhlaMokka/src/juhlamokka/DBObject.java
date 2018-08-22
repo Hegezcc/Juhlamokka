@@ -157,16 +157,9 @@ public abstract class DBObject {
     }
     
     /**
-     * Save changes of object to database
+     * Insert new object to database
      */
-    protected void save() {
-        
-    }
-    
-    /**
-     * Delete the object from database
-     */
-    protected void delete() {
+    protected void create() {
         
     }
     
@@ -174,6 +167,20 @@ public abstract class DBObject {
      * Read the object from database and initialize its properties
      */
     protected void read() {
+        
+    }
+    
+    /**
+     * Save changes of object to database
+     */
+    protected void update() {
+        
+    }
+    
+    /**
+     * Delete the object from database
+     */
+    protected void delete() {
         
     }
 }

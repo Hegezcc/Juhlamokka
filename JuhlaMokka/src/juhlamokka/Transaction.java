@@ -39,8 +39,8 @@ public class Transaction extends DBObject {
      * @param user
      * @param client
      * @param amount
-     * @param db
      * @param price
+     * @param db
      */
     public Transaction(String name, String description, Product product,
             User user, Client client, Integer amount, BigDecimal price, Connection db) {
