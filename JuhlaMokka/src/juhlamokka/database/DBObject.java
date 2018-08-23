@@ -1,4 +1,4 @@
-package juhlamokka;
+package juhlamokka.database;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -10,9 +10,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static juhlamokka.DBOperation.getKeyValuePairs;
-import static juhlamokka.DBOperation.getKeysAndValues;
-import static juhlamokka.DBOperation.prepareSQLMarkup;
+import static juhlamokka.database.DBOperation.getKeyValuePairs;
+import static juhlamokka.database.DBOperation.getKeysAndValues;
+import static juhlamokka.database.DBOperation.prepareSQLMarkup;
 
 /**
  * An abstract database object. Other objects are inherited of this

@@ -1,5 +1,8 @@
 package juhlamokka;
 
+import juhlamokka.database.DBManager;
+import juhlamokka.database.DBOperation;
+
 /**
  * The main class of program
  */

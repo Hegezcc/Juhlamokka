@@ -1,5 +1,7 @@
-package juhlamokka;
+package juhlamokka.database;
 
+import juhlamokka.database.ObjectManager;
+import juhlamokka.database.DBObject;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.ArrayList;

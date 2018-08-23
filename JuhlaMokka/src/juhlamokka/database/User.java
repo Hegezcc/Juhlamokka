@@ -1,5 +1,7 @@
-package juhlamokka;
+package juhlamokka.database;
 
+import juhlamokka.database.ObjectManager;
+import juhlamokka.database.DBObject;
 import defuse.passwordhashing.PasswordStorage;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import java.util.Arrays;
 import java.util.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import juhlamokka.ConfigManager;
 
 /**
  * A user object

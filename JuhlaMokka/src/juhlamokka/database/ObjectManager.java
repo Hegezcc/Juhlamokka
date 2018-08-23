@@ -1,4 +1,4 @@
-package juhlamokka;
+package juhlamokka.database;
 
 import java.util.LinkedHashMap;
 

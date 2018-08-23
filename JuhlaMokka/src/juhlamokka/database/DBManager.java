@@ -1,4 +1,4 @@
-package juhlamokka;
+package juhlamokka.database;
 
 import java.sql.*;
 import java.util.Properties;
@@ -15,7 +15,7 @@ public class DBManager {
     private String host, username, password, database;
     private Integer port;
     
-    DBManager(String host, int port, String username, String password, String database) throws ClassNotFoundException, SQLException {
+    public DBManager(String host, int port, String username, String password, String database) throws ClassNotFoundException, SQLException {
        this.host = host;
        this.port = port;
        this.username = username;

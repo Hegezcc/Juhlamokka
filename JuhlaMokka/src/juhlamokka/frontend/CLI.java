@@ -1,4 +1,4 @@
-package juhlamokka;
+package juhlamokka.frontend;
 
 import java.util.Arrays;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.List;
  * A command line frontend for the Juhlamokka inventory management software
  * @param <T>
  */
-public class CLIFrontend<T> {
+public class CLI<T> {
     public void start() {
         Menu m = new Menu("Title", "desc", Arrays.asList("1. Add", "2. Update", "3. Remove", "4. Exit"));
     }
