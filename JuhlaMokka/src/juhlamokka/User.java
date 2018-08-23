@@ -1,10 +1,20 @@
 package juhlamokka;
 
 import defuse.passwordhashing.PasswordStorage;
-import java.math.BigDecimal;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,13 +35,15 @@ public class User extends DBObject {
      * @param db
      */
     public User(Integer id, Connection db) {
-        init();
+        preInit();
         
         this.db = db;
         this.id = id;
         
         // Read the rest of data from db
-        read();
+        super.read();
+        
+        postInit();
     }
     
     /**
@@ -45,7 +57,7 @@ public class User extends DBObject {
      */
     public User(String name, String description, String password, Boolean admin,
             Boolean locked, Connection db) {
-        init();
+        preInit();
         
         // We are creating a new object, set properties
         this.db = db;
@@ -56,7 +68,9 @@ public class User extends DBObject {
         this.locked = locked;
         
         // Add the object to database
-        create();
+        super.create();
+        
+        postInit();
     }
     
     /**
@@ -71,7 +85,7 @@ public class User extends DBObject {
      */
     public User (Integer id, String name, String description, String password, 
             Boolean admin, Boolean locked, Connection db) {
-        init();
+        preInit();
         
         this.id = id;
         this.name = name;
@@ -80,15 +94,24 @@ public class User extends DBObject {
         this.admin = admin;
         this.locked = locked;
         this.db = db;
+        
+        postInit();
     }
     
     /**
-     * Do some common initialization for object
+     * Do some common initialization for object at the start of construction
      */
-    private void init() {
+    private void preInit() {
         this.tableName = "users";
         
         addFields(this.ownFields);
+    }
+    
+    /**
+     * Do some common initialization for object at the end of construction
+     */
+    private void postInit() {
+        ObjectManager.USERS.put(this.id, this);
     }
     
     /**
@@ -133,8 +156,22 @@ public class User extends DBObject {
      * @throws IllegalArgumentException
      */
     public void setPassword(char[] pwd) throws IllegalArgumentException {
-        if (pwd.length <= 0) {
-            throw new IllegalArgumentException("A password must be specified!");
+        Integer minimumPasswordLength = Integer.parseInt(
+                ConfigManager.DATA.getProperty("password-minimum-length", "10")
+        );
+        
+        if (pwd.length <= minimumPasswordLength) {
+            throw new IllegalArgumentException(
+                    "A password with at least %d characters must be specified!"
+            );
+        } else if (
+                "true".equals(ConfigManager.DATA.getProperty("check-password-pwnage")) && 
+                checkPasswordPwnage(pwd)) {
+            throw new IllegalArgumentException(
+                    "Your password has appeared in a data breach before! " +
+                    "Please give a new password. " +
+                    "Check https://haveibeenpwned.com/ for more details."
+            );
         }
 
         // Password checking guidelines
@@ -149,10 +186,122 @@ public class User extends DBObject {
             
         } catch (PasswordStorage.CannotPerformOperationException ex) {
             // This is run if something in the system is not secure for crypto
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, 
-                    "Cannot save password! " + 
-                    "Something is wrong within this system.", ex);
+            String msg = "Cannot save password! " + 
+                         "Something is wrong within this system.";
+            
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, msg, ex);
         }
+    }
+    
+    /**
+     * Check if password has been seen in a data breach using the
+     * haveibeenpwned api
+     * @param password
+     * @return
+     */
+    public static Boolean checkPasswordPwnage(char[] password) {
+        Boolean pwned = false;
+        
+        HttpURLConnection c = null;
+        
+        try {
+            String hash = sha1Hex(password);
+            String hashStart = hash.substring(0, 5);
+            String hashEnd = hash.substring(5);
+            
+            URL url = new URL(String.format(
+                    ConfigManager.DATA.getProperty("pwnage-check-api"),
+                    hashStart
+            ));
+            c = (HttpURLConnection) url.openConnection();
+            
+            c.setRequestProperty("User-Agent", 
+                    String.format(
+                            "%s/%s",
+                            ConfigManager.DATA.getProperty("program-name"),
+                            ConfigManager.DATA.getProperty("version")
+                    )
+            );
+            
+            c.setRequestMethod("GET");
+            c.setRequestProperty("Accept", "application/json");
+
+            if (c.getResponseCode() != 200)
+            {
+                throw new RuntimeException("Failed : HTTP error code : "
+                        + c.getResponseCode());
+            }
+
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(
+                            c.getInputStream()
+                    )
+            );
+
+            String line;
+            
+            while (true) {
+                line = br.readLine();
+                if (line == null) {
+                    break;
+                } else if (line.equals(hashEnd)) {
+                    pwned = true;
+                    break;
+                }
+            }
+        } catch (IOException | RuntimeException | NoSuchAlgorithmException ex) {
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } finally {
+            if (c != null) {
+                c.disconnect();
+            }
+        }
+        
+        return pwned;
+    }
+    
+    /**
+     * Get a sha1 hex hash from char array
+     * @param password
+     * @return
+     * @throws NoSuchAlgorithmException 
+     */
+    private static String sha1Hex(char[] password) throws NoSuchAlgorithmException {
+        MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+        crypt.reset();
+        crypt.update(charToBytes(password));
+        return byteToHex(crypt.digest());
+    }
+
+    /**
+     * Get hex string from byte[]
+     * @param hash
+     * @return 
+     */
+    private static String byteToHex(final byte[] hash) {
+        String result;
+        try (Formatter formatter = new Formatter()) {
+            for (byte b : hash) {
+                formatter.format("%02x", b);
+            }   result = formatter.toString();
+        }
+        return result;
+    }
+    
+    /**
+     * Get byte[] from char[]
+     * @param chars
+     * @return 
+     */
+    private static byte[] charToBytes(char[] chars) {
+        CharBuffer charBuffer = CharBuffer.wrap(chars);
+        ByteBuffer byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
+        byte[] bytes = Arrays.copyOfRange(byteBuffer.array(),
+                byteBuffer.position(), byteBuffer.limit());
+        Arrays.fill(charBuffer.array(), '\u0000'); // clear sensitive data
+        Arrays.fill(byteBuffer.array(), (byte) 0); // clear sensitive data
+        return bytes;
     }
     
     /**

@@ -23,13 +23,15 @@ public class Product extends DBObject {
      * @param db
      */
     public Product(Integer id, Connection db) {
-        init();
+        preInit();
         
         this.db = db;
         this.id = id;
         
         // Read the rest of data from db
-        read();
+        super.read();
+        
+        postInit();
     }
     
     /**
@@ -43,7 +45,7 @@ public class Product extends DBObject {
      */
     public Product(String name, String description, BigDecimal basePrice, 
             Integer amount, String unit, Connection db) {
-        init();
+        preInit();
         
         // We are creating a new object, set properties
         this.db = db;
@@ -54,7 +56,9 @@ public class Product extends DBObject {
         this.unit = unit;
         
         // Add the object to database
-        create();
+        super.create();
+        
+        postInit();
     }
     
     /**
@@ -69,7 +73,7 @@ public class Product extends DBObject {
      */
     public Product(Integer id, String name, String description, BigDecimal basePrice, 
             Integer amount, String unit, Connection db) {
-        init();
+        preInit();
         
         this.id = id;
         this.name = name;
@@ -78,15 +82,24 @@ public class Product extends DBObject {
         this.amount = amount;
         this.unit = unit;
         this.db = db;
+        
+        postInit();
     }
     
     /**
-     * Do some common initialization for object
+     * Do some common initialization for object at the start of construction
      */
-    private void init() {
+    private void preInit() {
         this.tableName = "products";
         
         addFields(this.ownFields);
+    }
+    
+    /**
+     * Do some common initialization for object at the end of construction
+     */
+    private void postInit() {
+        ObjectManager.PRODUCTS.put(this.id, this);
     }
     
     /**

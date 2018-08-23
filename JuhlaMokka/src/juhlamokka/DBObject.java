@@ -35,6 +35,10 @@ public abstract class DBObject {
             "name", "description"
     ));
 
+    /**
+     * The fields that have been touched after construction. Used for taking
+     * care of updating object in database.
+     */
     protected ArrayList<String> changedFields = new ArrayList<>();
 
     /**
@@ -146,7 +150,7 @@ public abstract class DBObject {
      * @return Date
      */
     public Date getAddedOn() {
-        return addedOn;
+        return this.addedOn;
     }
     
     /**
@@ -154,7 +158,7 @@ public abstract class DBObject {
      * @return Date
      */
     public Date getModifiedOn() {
-        return modifiedOn;
+        return this.modifiedOn;
     }
     
     /**
@@ -169,26 +173,33 @@ public abstract class DBObject {
         });
     }
     
+    /**
+     * Hacky way to set properties of object with knowing the property name
+     * @param object
+     * @param fieldName
+     * @param fieldValue
+     * @return 
+     */
     public static boolean set(
             Object object, String fieldName, Object fieldValue) {
-    Class<?> clazz = object.getClass();
-    while (clazz != null) {
-        try {
-            Field field = clazz.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            field.set(object, fieldValue);
-            return true;
-        } catch (NoSuchFieldException e) {
-            clazz = clazz.getSuperclass();
-        } catch (
-                SecurityException | 
-                IllegalAccessException | 
-                IllegalArgumentException e) {
-            throw new IllegalStateException(e);
+        Class<?> clazz = object.getClass();
+        while (clazz != null) {
+            try {
+                Field field = clazz.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                field.set(object, fieldValue);
+                return true;
+            } catch (NoSuchFieldException e) {
+                clazz = clazz.getSuperclass();
+            } catch (
+                    SecurityException | 
+                    IllegalAccessException | 
+                    IllegalArgumentException e) {
+                throw new IllegalStateException(e);
+            }
         }
+        return false;
     }
-    return false;
-}
     
     /**
      * Insert new object to database
@@ -239,10 +250,10 @@ public abstract class DBObject {
             q = prepareSQLMarkup(this, q, this.fields);
             
             // Inject SQL code to DB and get some payload from there
-            ResultSet rs = q.executeQuery();
-            
-            for (String field : this.fields) {
-                set(this, field, rs.getObject(field));
+            try (ResultSet rs = q.executeQuery()) {
+                for (String field : this.fields) {
+                    set(this, field, rs.getObject(field));
+                }
             }
         } catch (SQLException ex) {
             // Handle exceptions

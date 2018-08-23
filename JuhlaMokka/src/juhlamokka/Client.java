@@ -20,15 +20,15 @@ public class Client extends DBObject {
      * @param db
      */
     public Client(Integer id, Connection db) {
-        addFields(this.ownFields);
+        preInit();
         
         this.db = db;
         this.id = id;
         
-        init();
-        
         // Read the rest of data from db
-        read();
+        super.read();
+        
+        postInit();
     }
     
     /**
@@ -38,7 +38,7 @@ public class Client extends DBObject {
      * @param db
      */
     public Client(String name, String description, Connection db) {
-        init();
+        preInit();
         
         // We are creating a new object, set properties
         this.db = db;
@@ -46,7 +46,9 @@ public class Client extends DBObject {
         this.description = description;
         
         // Add the object to database
-        create();
+        super.create();
+        
+        postInit();
     }
     
     /**
@@ -57,20 +59,29 @@ public class Client extends DBObject {
      * @param db
      */
     public Client(Integer id, String name, String description, Connection db) {
-        init();
+        preInit();
         
         this.id = id;
         this.name = name;
         this.description = description;
         this.db = db;
+        
+        postInit();
     }
     
     /**
-     * Do some common initialization for object
+     * Do some common initialization for object at the start of construction
      */
-    private void init() {
+    private void preInit() {
         this.tableName = "clients";
         
         addFields(this.ownFields);
+    }
+    
+    /**
+     * Do some common initialization for object at the end of construction
+     */
+    private void postInit() {
+        ObjectManager.CLIENTS.put(this.id, this);
     }
 }

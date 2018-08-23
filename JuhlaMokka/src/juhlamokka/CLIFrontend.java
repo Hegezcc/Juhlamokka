@@ -1,18 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package juhlamokka;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
 
 /**
- *
- * @author s1800571
+ * A command line frontend for the Juhlamokka inventory management software
+ * @param <T>
  */
 public class CLIFrontend<T> {
     public void start() {
@@ -21,9 +14,9 @@ public class CLIFrontend<T> {
 }
 
 class Menu {
-    private String title;
-    private String description;
-    private List<String> list;
+    private final String title;
+    private final String description;
+    private final List<String> list;
     
     Menu(String title, String description, List<String> list) {
         this.title = title;
@@ -37,8 +30,8 @@ class Menu {
         System.out.println("=" + title + "=");
         System.out.println(description);
         
-        for(String item : list) {
+        list.forEach((item) -> {
             System.out.println(item);
-        }
+        });
     }
 }

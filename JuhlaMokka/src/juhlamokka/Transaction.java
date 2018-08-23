@@ -22,13 +22,15 @@ public class Transaction extends DBObject {
      * @param db
      */
     public Transaction(Integer id, Connection db) {
-        init();
+        preInit();
         
         this.db = db;
         this.id = id;
         
         // Read the rest of data from db
-        read();
+        super.read();
+        
+        postInit();
     }
     
     /**
@@ -44,7 +46,7 @@ public class Transaction extends DBObject {
      */
     public Transaction(String name, String description, Product product,
             User user, Client client, Integer amount, BigDecimal price, Connection db) {
-        init();
+        preInit();
         
         // We are creating a new object, set properties
         this.db = db;
@@ -57,7 +59,9 @@ public class Transaction extends DBObject {
         this.price = price;
         
         // Add the object to database
-        create();
+        super.create();
+        
+        postInit();
     }
     
     /**
@@ -74,7 +78,7 @@ public class Transaction extends DBObject {
      */
     public Transaction(Integer id, String name, String description, Product product,
             User user, Client client, Integer amount, BigDecimal price, Connection db) {
-        init();
+        preInit();
         
         this.id = id;
         this.name = name;
@@ -85,15 +89,24 @@ public class Transaction extends DBObject {
         this.amount = amount;
         this.price = price;
         this.db = db;
+        
+        postInit();
     }
     
     /**
-     * Do some common initialization for object
+     * Do some common initialization for object at the start of construction
      */
-    private void init() {
+    private void preInit() {
         this.tableName = "transactions";
         
-        init();
+        addFields(this.ownFields);
+    }
+    
+    /**
+     * Do some common initialization for object at the end of construction
+     */
+    private void postInit() {
+        ObjectManager.TRANSACTIONS.put(this.id, this);
     }
     
     /**
@@ -188,5 +201,24 @@ public class Transaction extends DBObject {
     public void setAmount(Integer amount) {
         this.changedFields.add("amount");
         this.amount = amount;
+    }
+    
+    /**
+     * Return the base price of product
+     * @return
+     */
+    public BigDecimal getPrice() {
+        return price;
+    }
+    
+    /**
+     * Set the base price of product (must be non-negative)
+     * @param newPrice
+     * @throws IllegalArgumentException
+     */
+    public void setPrice(BigDecimal newPrice) {
+        this.changedFields.add("price");
+        
+        this.price = newPrice;
     }
 }
