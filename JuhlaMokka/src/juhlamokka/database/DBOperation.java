@@ -9,6 +9,10 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.sql.rowset.CachedRowSet;
+
+import com.sun.rowset.CachedRowSetImpl;
+
 /**
  * Do extensive database operations
  */
@@ -37,28 +41,28 @@ public class DBOperation {
         ArrayList<Product> results = new ArrayList<>();
         
         try {
-            ResultSet rs = read(new ArrayList<>(
+            CachedRowSet crs = read(new ArrayList<>(
                     Arrays.asList("id", "name", "description", "basePrice", 
                                   "amount", "unit")),
-                    "products", 
+                    "products",
                     condition,
                     limit
             );
             
-            if (rs != null) {
-                while (rs.next()) {
+            if (crs != null) {
+               while (crs.next()) {
                     results.add(new Product(
-                            rs.getInt("id"), 
-                            rs.getString("name"), 
-                            rs.getString("description"), 
-                            rs.getBigDecimal("basePrice"), 
-                            rs.getInt("amount"), 
-                            rs.getString("unit"), 
+                            crs.getInt("id"), 
+                            crs.getString("name"), 
+                            crs.getString("description"), 
+                            crs.getBigDecimal("basePrice"), 
+                            crs.getInt("amount"), 
+                            crs.getString("unit"), 
                             this.db
-                    ));
+                    ));         
                 }
                 
-                rs.close();
+                crs.close();
             }
             
         } catch (SQLException ex) {
@@ -260,7 +264,7 @@ public class DBOperation {
      * Mass-get things from database. It must be observed that "condition" won't
      * get attack surface for possible SQL injection.
      */
-    private ResultSet read(ArrayList<String> fields, String tableName, 
+    private CachedRowSet read(ArrayList<String> fields, String tableName, 
             String condition, Integer limit) {
         
         // Declare the q and rs here to allow proper .close() 
@@ -287,11 +291,20 @@ public class DBOperation {
             rs = q.executeQuery();
             
             // DEBUG DATA! TODO: REMOVE FOR PRODUCTION IF IT WORKS
-            while(rs.next()) {
+            /*while(rs.next()) {
                 System.out.println(rs.getString("name") + ", " + rs.getString("description"));
-            }
+            }*/
             
-            return rs;
+            CachedRowSet crs = new CachedRowSetImpl();
+            crs.populate(rs);
+            rs.close();
+            
+            // Debug crs
+            /*while(crs.next()) {
+                System.out.println(crs.getString("name") + ", " + crs.getString("description"));
+            }*/
+            
+            return crs;
         } catch(SQLException e) {
             Logger.getLogger(
                     DBOperation.class.getName())

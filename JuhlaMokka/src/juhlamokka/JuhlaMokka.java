@@ -1,7 +1,11 @@
 package juhlamokka;
 
+import java.util.ArrayList;
+
 import juhlamokka.database.DBManager;
 import juhlamokka.database.DBOperation;
+import juhlamokka.database.Product;
+import juhlamokka.database.Transaction;
 
 /**
  * The main class of program
@@ -35,7 +39,10 @@ public class JuhlaMokka {
         );
         
         DBOperation dbo = new DBOperation(db.getConnection());
-        dbo.getProducts("id > 0", -1);
+        ArrayList<Transaction> transactions = dbo.getTransactions("id > 0", -1);
+        for (Transaction transaction : transactions) {
+			System.out.println("Mahtavaa!: " + transaction.getProduct());
+		}
         
         //CLIFrontend fe = new CLIFrontend();
         //fe.start();

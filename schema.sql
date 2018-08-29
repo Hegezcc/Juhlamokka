@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS products (
   name          varchar(255) NOT NULL UNIQUE,
   description   text NULL,
   basePrice     decimal(12, 2),
-  amount	      int,
-  unit			    varchar(255) NOT NULL,
+  amount	    int,
+  unit			varchar(255) NOT NULL,
   addedOn       timestamp NOT NULL DEFAULT now(),
   modifiedOn    timestamp NOT NULL DEFAULT now()
 );
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS users (
   name          varchar(255) NOT NULL UNIQUE,
   password      varchar(255) NOT NULL,
   description   text NULL,
-  locked	      BOOLEAN NOT NULL DEFAULT FALSE,
+  locked	    BOOLEAN NOT NULL DEFAULT FALSE,
   addedOn       timestamp NOT NULL DEFAULT now(),
   modifiedOn    timestamp NOT NULL DEFAULT now()
 );
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   clientid      integer REFERENCES clients(id) ON DELETE SET NULL,
   description   text NULL,
   productid     integer REFERENCES products(id) ON DELETE SET NULL,
-  amount	      int,
+  amount	    int,
   price         decimal(12, 2),
   addedOn       timestamp NOT NULL DEFAULT now()
 );
