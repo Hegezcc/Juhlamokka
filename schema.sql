@@ -26,7 +26,8 @@ CREATE TABLE IF NOT EXISTS users (
   name          varchar(255) NOT NULL UNIQUE,
   password      varchar(255) NOT NULL,
   description   text NULL,
-  locked	    BOOLEAN NOT NULL DEFAULT FALSE,
+  isAdmin		BOOLEAN NOT NULL DEFAULT FALSE,
+  isLocked	    BOOLEAN NOT NULL DEFAULT FALSE,
   addedOn       timestamp NOT NULL DEFAULT now(),
   modifiedOn    timestamp NOT NULL DEFAULT now()
 );
@@ -50,7 +51,8 @@ CREATE TABLE IF NOT EXISTS transactions (
   productid     integer REFERENCES products(id) ON DELETE SET NULL,
   amount	    int,
   price         decimal(12, 2),
-  addedOn       timestamp NOT NULL DEFAULT now()
+  addedOn       timestamp NOT NULL DEFAULT now(),
+  modifiedOn    timestamp NOT NULL DEFAULT now()
 );
 
 /* When updated update updatedOn time */

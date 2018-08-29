@@ -16,25 +16,28 @@ INSERT INTO products(name, description, baseprice, amount, unit) VALUES (
 );
 
 /* Add example users */
-INSERT INTO users(name, password, description, locked) VALUES (
+INSERT INTO users(name, password, description, isAdmin, isLocked) VALUES (
   'Aleksi',                         /*name*/
   'jaahas',							/*password*/
   'Peruskäyttäjä',                  /*description*/
-  false                             /*locked*/
+  true,								/*isAdmin*/
+  false                             /*isLocked*/
 );
 
-INSERT INTO users(name, password, description, locked) VALUES (
+INSERT INTO users(name, password, description, isAdmin, isLocked) VALUES (
   'Heikki',                         /*name*/
   'blackhat',			            /*password*/
   'Peruskäyttäjä',                  /*description*/
-  false                             /*locked*/
+  true,								/*isAdmin*/
+  false                             /*isLocked*/
 );
 
-INSERT INTO users(name, password, description, locked) VALUES (
+INSERT INTO users(name, password, description, isAdmin, isLocked) VALUES (
   'Toni',                           /*name*/
   'tervehdys',                      /*password*/
   'Peruskäyttäjä',                  /*description*/
-  false                             /*locked*/
+  true,								/*isAdmin*/
+  false                             /*isLocked*/
 );
 
 /* Add example clients */
@@ -55,7 +58,7 @@ INSERT INTO clients(name, description) VALUES (
 
 /* Add example transactions */
 INSERT INTO transactions(userid, clientid, description, productid, amount, price) VALUES (
-  7,                          /*userid*/
+  2,                          /*userid*/
   8,                          /*clientid*/
   'Hyvä kauppa oli',          /*description*/
   3,                          /*productid*/
@@ -64,7 +67,7 @@ INSERT INTO transactions(userid, clientid, description, productid, amount, price
 );
 
 INSERT INTO transactions(userid, clientid, description, productid, amount, price) VALUES (
-  9,                          /*userid*/
+  1,                          /*userid*/
   7,                          /*clientid*/
   'Huono kauppa oli',         /*description*/
   2,                          /*productid*/

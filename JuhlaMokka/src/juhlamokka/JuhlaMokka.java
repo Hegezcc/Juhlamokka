@@ -1,9 +1,11 @@
 package juhlamokka;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import juhlamokka.database.DBManager;
 import juhlamokka.database.DBOperation;
+import juhlamokka.database.ObjectManager;
 import juhlamokka.database.Product;
 import juhlamokka.database.Transaction;
 
@@ -39,11 +41,15 @@ public class JuhlaMokka {
         );
         
         DBOperation dbo = new DBOperation(db.getConnection());
-        ArrayList<Transaction> transactions = dbo.getTransactions("id > 0", -1);
+        ArrayList<Transaction> transactions = dbo.getTransactions("1=1", -1);
+        
         for (Transaction transaction : transactions) {
-			System.out.println("Mahtavaa!: " + transaction
-			.getUser());
+        	transaction
+			.getUser().setLocked(true);
+        	transaction.getUser().update();
 		}
+        
+        //System.out.println(String.join(",", ObjectManager.TRANSACTIONS.keySet().stream().map(e -> String.valueOf(e)).collect(Collectors.toSet())));
         
         //CLIFrontend fe = new CLIFrontend();
         //fe.start();

@@ -266,7 +266,7 @@ public abstract class DBObject {
     /**
      * Save changes of object to database
      */
-    protected void update() {
+    public void update() {
         // Keys and values as strings (used for SQL clause creation)
         String pairs = getKeyValuePairs(this.changedFields);
         
@@ -275,12 +275,13 @@ public abstract class DBObject {
             // Prepare the statement
             PreparedStatement q = db.prepareStatement(
                     "update " + this.tableName + " set " + pairs +
-                    " where id = " + this.id + " limit 1"
+                    " where id = " + this.id
             );
             
             // Prepare the attributes
             q = prepareSQLMarkup(this, q, this.changedFields);
             
+            System.out.println(q);
             // Inject SQL code to DB
             q.executeUpdate();
         } catch (SQLException ex) {

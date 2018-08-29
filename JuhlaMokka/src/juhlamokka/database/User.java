@@ -29,7 +29,7 @@ public class User extends DBObject {
      * Shows which fields of object are updateable
      */
     protected ArrayList<String> ownFields = new ArrayList<>(Arrays.asList(
-            "password", "admin", "locked"
+            "password", "isAdmin", "isLocked"
     ));
     
     /**
@@ -67,8 +67,8 @@ public class User extends DBObject {
         this.name = name;
         this.description = description;
         this.password = password;
-        this.admin = admin;
-        this.locked = locked;
+        this.isAdmin = admin;
+        this.isLocked = locked;
         
         // Add the object to database
         super.create();
@@ -94,8 +94,8 @@ public class User extends DBObject {
         this.name = name;
         this.description = description;
         this.password = password;
-        this.admin = admin;
-        this.locked = locked;
+        this.isAdmin = admin;
+        this.isLocked = locked;
         this.db = db;
         
         postInit();
@@ -120,17 +120,17 @@ public class User extends DBObject {
     /**
      * Password hash of the users password, created with a library
      */
-    private String password;
+    protected String password;
     
     /**
      * The true answer of a privilege question: is the account locked or not?
      */
-    private Boolean locked;
+    protected Boolean isLocked;
     
     /**
      * Determines if user is an administrator, i.e. can edit other users
      */
-    private Boolean admin;
+    protected Boolean isAdmin;
     
     /**
      * Securely check and verify a password against the password hash.
@@ -312,7 +312,7 @@ public class User extends DBObject {
      * @return
      */
     public Boolean isLocked() {
-        return locked;
+        return isLocked;
     }
     
     /**
@@ -326,9 +326,9 @@ public class User extends DBObject {
                     "truth value!");
         }
         
-        this.changedFields.add("locked");
+        this.changedFields.add("isLocked");
         
-        this.locked = status;
+        this.isLocked = status;
     }
     
     /**
@@ -336,7 +336,7 @@ public class User extends DBObject {
      * @return
      */
     public Boolean isAdmin() {
-        return admin;
+        return isAdmin;
     }
     
     /**
@@ -350,8 +350,8 @@ public class User extends DBObject {
                     "truth value!");
         }
         
-        this.changedFields.add("admin");
+        this.changedFields.add("isAdmin");
         
-        this.admin = status;
+        this.isAdmin = status;
     }
 }

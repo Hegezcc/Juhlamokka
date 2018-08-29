@@ -87,7 +87,7 @@ public class DBOperation {
         try {
             CachedRowSet rs = read(new ArrayList<>(
                     Arrays.asList("id", "name", "description", "password", 
-                                  "admin", "locked")),
+                                  "isAdmin", "isLocked")),
                     "users", 
                     condition,
                     limit
@@ -100,8 +100,8 @@ public class DBOperation {
                             rs.getString("name"), 
                             rs.getString("description"), 
                             rs.getString("password"),
-                            rs.getBoolean("admin"),
-                            rs.getBoolean("locked"),
+                            rs.getBoolean("isAdmin"),
+                            rs.getBoolean("isLocked"),
                             this.db
                     ));
                 }
@@ -195,11 +195,11 @@ public class DBOperation {
                     }
                     
                     if (!(ObjectManager.USERS.containsKey(userId))) {
-                        missingProductIds.add(userId.toString());
+                        missingUserIds.add(userId.toString());
                     }
                     
                     if (!(ObjectManager.CLIENTS.containsKey(clientId))) {
-                        missingProductIds.add(clientId.toString());
+                        missingClientIds.add(clientId.toString());
                     }
                 }
                 
@@ -231,7 +231,7 @@ public class DBOperation {
                 }
                 
                 // Refresh ResultSet back to start
-                rs.first();
+                rs.beforeFirst();
                 
                 // Second round: actually create the objects
                 while (rs.next()) {
