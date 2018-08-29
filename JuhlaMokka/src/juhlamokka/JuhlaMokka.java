@@ -1,7 +1,11 @@
 package juhlamokka;
 
+import java.util.ArrayList;
+
 import juhlamokka.database.DBManager;
 import juhlamokka.database.DBOperation;
+import juhlamokka.database.Product;
+import juhlamokka.database.Transaction;
 
 /**
  * The main class of program
@@ -15,7 +19,7 @@ public class JuhlaMokka {
     public static void main(String[] args) throws Exception {
         // Read the configuration statically, it's now stored
         // in ConfigManager.DATA
-        ConfigManager.readConfig();
+        ConfigManager.readDefaultConfig();
         
         // TODO: move to config and remove for production
         // These are now publicly at Github, hi for everyone connecting 
@@ -35,7 +39,11 @@ public class JuhlaMokka {
         );
         
         DBOperation dbo = new DBOperation(db.getConnection());
-        dbo.getProducts("id > 10", -1);
+        ArrayList<Transaction> transactions = dbo.getTransactions("id > 0", -1);
+        for (Transaction transaction : transactions) {
+			System.out.println("Mahtavaa!: " + transaction
+			.getUser());
+		}
         
         //CLIFrontend fe = new CLIFrontend();
         //fe.start();
