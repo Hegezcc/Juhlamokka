@@ -1,7 +1,5 @@
 package juhlamokka.database;
 
-import juhlamokka.database.ObjectManager;
-import juhlamokka.database.DBObject;
 import defuse.passwordhashing.PasswordStorage;
 import java.io.BufferedReader;
 import java.io.IOException;

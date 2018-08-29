@@ -1,4 +1,4 @@
-package juhlamokka.frontend;
+package juhlamokka.frontend.cli;
 
 import java.util.Arrays;
 import java.util.List;
