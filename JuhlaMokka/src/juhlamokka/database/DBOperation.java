@@ -1,11 +1,13 @@
 package juhlamokka.database;
 
+import defuse.passwordhashing.PasswordStorage;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -258,6 +260,64 @@ public class DBOperation {
         }
         
         return results;
+    }
+    
+    /**
+     * Get a user by its username and password
+     * @param username
+     * @param password
+     * @return
+     */
+    public User getUserByCredentials(String username, char[] password) {
+        User user = null;
+        
+        try {
+            ResultSet rs = read(new ArrayList<>(
+                    Arrays.asList("id", "name", "description", "password", 
+                                  "admin", "locked")),
+                    "products", 
+                    String.format("name = %s", username),
+                    1
+            );
+            
+            if (rs != null) {
+                while (rs.next()) {
+                    user = new User(
+                            rs.getInt("id"), 
+                            rs.getString("name"), 
+                            rs.getString("description"), 
+                            rs.getString("password"), 
+                            rs.getBoolean("admin"), 
+                            rs.getBoolean("locked"), 
+                            this.db
+                    );
+                }
+                
+                rs.close();
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(
+                    DBOperation.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            if (user == null || !user.checkPassword(password)) {
+                throw new IllegalArgumentException(
+                        String.format("User %s not found", username)
+                );
+            }
+        } catch (IllegalArgumentException | 
+                PasswordStorage.CannotPerformOperationException | 
+                PasswordStorage.InvalidHashException ex) {
+            Logger.getLogger(DBOperation.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            
+            throw new NoSuchElementException("User not found");
+        }
+        
+        return user;
     }
     
     /**

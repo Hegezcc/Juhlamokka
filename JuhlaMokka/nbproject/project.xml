@@ -13,7 +13,9 @@
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
             <word>api</word>
+            <word>auth</word>
             <word>Hacky</word>
+            <word>hashmap</word>
             <word>haveibeenpwned</word>
             <word>init</word>
             <word>updateable</word>
