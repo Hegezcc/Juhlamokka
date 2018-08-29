@@ -41,7 +41,8 @@ public class JuhlaMokka {
         DBOperation dbo = new DBOperation(db.getConnection());
         ArrayList<Transaction> transactions = dbo.getTransactions("id > 0", -1);
         for (Transaction transaction : transactions) {
-			System.out.println("Mahtavaa!: " + transaction.getProduct());
+			System.out.println("Mahtavaa!: " + transaction
+			.getUser());
 		}
         
         //CLIFrontend fe = new CLIFrontend();

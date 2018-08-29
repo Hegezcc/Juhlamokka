@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS clients (
 /* Create transactions table */
 CREATE TABLE IF NOT EXISTS transactions (
   id            SERIAL PRIMARY KEY,   /* Autoincrement */
+  name			varchar(255),
   userid        integer REFERENCES users(id) ON DELETE SET NULL,
   clientid      integer REFERENCES clients(id) ON DELETE SET NULL,
   description   text NULL,

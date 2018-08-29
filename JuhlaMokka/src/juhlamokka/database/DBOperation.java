@@ -85,7 +85,7 @@ public class DBOperation {
         ArrayList<User> results = new ArrayList<>();
         
         try {
-            ResultSet rs = read(new ArrayList<>(
+            CachedRowSet rs = read(new ArrayList<>(
                     Arrays.asList("id", "name", "description", "password", 
                                   "admin", "locked")),
                     "users", 
@@ -129,7 +129,7 @@ public class DBOperation {
         ArrayList<Client> results = new ArrayList<>();
         
         try {
-            ResultSet rs = read(new ArrayList<>(
+        	CachedRowSet rs = read(new ArrayList<>(
                     Arrays.asList("id", "name", "description")),
                     "clients", 
                     condition,
@@ -170,7 +170,7 @@ public class DBOperation {
         ArrayList<Transaction> results = new ArrayList<>();
         
         try {
-            ResultSet rs = read(new ArrayList<>(
+        	CachedRowSet rs = read(new ArrayList<>(
                     Arrays.asList("id", "name", "description", "productid",
                             "userid", "clientid", "amount", "price")),
                     "transactions", 
