@@ -55,9 +55,8 @@ public class JuhlaMokka {
 		}
         */
         
-        char[] a = {'b','l','a','c','k','h','a','t'};
-        char[] b = {};
-        Login l = dbo.getUserLoginByCredentials("Heikki", a, InetAddress.getLocalHost());
+        char[] s = "blackhat".toCharArray();
+        Login l = dbo.getUserLoginByCredentials("Heikki", s, InetAddress.getLocalHost());
 
         //System.out.println(String.join(",", ObjectManager.TRANSACTIONS.keySet().stream().map(e -> String.valueOf(e)).collect(Collectors.toSet())));
         
