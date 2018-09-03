@@ -5,6 +5,7 @@ import juhlamokka.database.DBObject;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 
 /**
  * A client object
@@ -23,6 +24,8 @@ public class Client extends DBObject {
      */
     public Client(Integer id, Connection db) {
         preInit();
+        
+        
         
         this.db = db;
         this.id = id;
