@@ -418,6 +418,27 @@ public class DBOperation {
     }
     
     /**
+     * Create effective SQL fields from object properties for use in SQL code
+     * @param fields
+     * @param foreignObjects
+     * @return
+     */
+    public static ArrayList<String> getSQLFields(ArrayList<String> fields, 
+            ArrayList<String> foreignObjects) {
+        ArrayList<String> sqlFields = new ArrayList<>();
+        
+        for (String field : fields) {
+            if (foreignObjects.contains(field)) {
+                sqlFields.add(field + "id");
+            } else {
+                sqlFields.add(field);
+            }
+        }
+        
+        return sqlFields;
+    }
+    
+    /**
      * Create key-value pairs for SQL select syntax, e.g. key1 = ?, key2 = ?
      * @param fields
      * @return
@@ -436,21 +457,27 @@ public class DBOperation {
      * Prepares given statement with fields from obj
      * @param obj
      * @param q
-     * @param fields
+     * @param keyFields
+     * @param sqlFields
      * @return
      * @throws SQLException
      */
     public static PreparedStatement prepareSQLMarkup(
-            Object obj, PreparedStatement q, ArrayList<String> fields) 
-            throws SQLException {
+            DBObject obj, PreparedStatement q, ArrayList<String> keyFields, 
+            ArrayList<String> sqlFields) throws SQLException {
         
-        for (int i = 0; i < fields.size(); i++) {
-            String key = fields.get(i);
+        for (int i = 0; i < keyFields.size(); i++) {
+            String key = keyFields.get(i);
             
             // Test if we had this value on our object: if not, set it null
             Object value;
             try {
                 value = obj.getClass().getDeclaredField(key).get(obj);
+                
+                // We may have an actual foreign object here, so prepare by id
+                if (sqlFields.contains(key + "id")) {
+                    value = ((DBObject) value).getId();
+                }
             } catch (
                     NoSuchFieldException | 
                     SecurityException | 

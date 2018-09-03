@@ -45,6 +45,15 @@ public class JuhlaMokka {
         ArrayList<User> users = dbo.getUsers("1=1", -1);
         
         for (User user : users) {
+            System.out.println(user.getName());
+        }
+        
+        /* Some initial password hashing code
+        // Toni: tervehdys
+        // Aleksi: jaahas
+        // Heikki: blackhat
+        
+        for (User user : users) {
         	String pw = user.getpw();
                 String hash = defuse.passwordhashing.PasswordStorage.createHash(pw);
                 
@@ -54,6 +63,7 @@ public class JuhlaMokka {
                 
                 user.update();
         }
+        */
         
         //System.out.println(String.join(",", ObjectManager.TRANSACTIONS.keySet().stream().map(e -> String.valueOf(e)).collect(Collectors.toSet())));
         

@@ -17,6 +17,13 @@ public class Login extends DBObject {
     ));
     
     /**
+     * Foreign object info for smart database usage
+     */
+    protected ArrayList<String> foreignObjects = new ArrayList<>(Arrays.asList(
+            "user"
+    ));
+    
+    /**
      * Get user login data
      * @param id
      * @param db

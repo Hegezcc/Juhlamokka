@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import static juhlamokka.database.DBOperation.getKeyValuePairs;
 import static juhlamokka.database.DBOperation.getKeysAndValues;
 import static juhlamokka.database.DBOperation.prepareSQLMarkup;
+import static juhlamokka.database.DBOperation.getSQLFields;
 
 /**
  * An abstract database object. Other objects are inherited of this
@@ -40,6 +41,13 @@ public abstract class DBObject {
      * care of updating object in database.
      */
     protected ArrayList<String> changedFields = new ArrayList<>();
+    
+    
+    /**
+     * Foreign object info for smart database usage. Empty by default, must be
+     * overridden if object wants to use this
+     */
+    protected ArrayList<String> foreignObjects = new ArrayList<>();
 
     /**
      * Object id, used for database purposes (created by database)
@@ -205,8 +213,12 @@ public abstract class DBObject {
      * Insert new object to database
      */
     protected void create() {
+        // Get effective SQL fields
+        ArrayList<String> sqlFields = getSQLFields(this.changedFields, 
+                this.foreignObjects);
+        
         // Keys and values as strings (used for SQL clause creation)
-        String[] kvs = getKeysAndValues(this.fields);
+        String[] kvs = getKeysAndValues(sqlFields);
         String keys = kvs[0];
         String values = kvs[1];
         
@@ -219,7 +231,7 @@ public abstract class DBObject {
             );
             
             // Prepare the attributes
-            q = prepareSQLMarkup(this, q, this.fields);
+            q = prepareSQLMarkup(this, q, this.fields, sqlFields);
             
             // Inject SQL code to DB
             q.executeUpdate();
@@ -235,8 +247,12 @@ public abstract class DBObject {
      * Read the object from database and initialize its properties
      */
     protected void read() {
+        // Get effective SQL fields
+        ArrayList<String> sqlFields = getSQLFields(this.changedFields, 
+                this.foreignObjects);
+        
         // Keys as string (used for SQL clause creation)
-        String keys = getKeysAndValues(this.fields)[0];
+        String keys = getKeysAndValues(sqlFields)[0];
         
         // Only log errors, don't crash the program
         try {
@@ -247,7 +263,7 @@ public abstract class DBObject {
             );
             
             // Prepare the attributes
-            q = prepareSQLMarkup(this, q, this.fields);
+            q = prepareSQLMarkup(this, q, this.fields, sqlFields);
             
             // Inject SQL code to DB and get some payload from there
             try (ResultSet rs = q.executeQuery()) {
@@ -267,8 +283,12 @@ public abstract class DBObject {
      * Save changes of object to database
      */
     public void update() {
+        // Get effective SQL fields
+        ArrayList<String> sqlFields = getSQLFields(this.changedFields, 
+                this.foreignObjects);
+        
         // Keys and values as strings (used for SQL clause creation)
-        String pairs = getKeyValuePairs(this.changedFields);
+        String pairs = getKeyValuePairs(sqlFields);
         
         // Only log errors, don't crash the program
         try {
@@ -279,7 +299,7 @@ public abstract class DBObject {
             );
             
             // Prepare the attributes
-            q = prepareSQLMarkup(this, q, this.changedFields);
+            q = prepareSQLMarkup(this, q, this.changedFields, sqlFields);
             
             System.out.println(q);
             // Inject SQL code to DB
@@ -296,6 +316,10 @@ public abstract class DBObject {
      * Delete the object from database
      */
     protected void delete() {
+        // Get effective SQL fields
+        ArrayList<String> sqlFields = getSQLFields(this.changedFields, 
+                this.foreignObjects);
+        
         // Only log errors, don't crash the program
         try {
             // Prepare the statement
@@ -305,7 +329,7 @@ public abstract class DBObject {
             );
             
             // Prepare the attributes
-            q = prepareSQLMarkup(this, q, this.changedFields);
+            q = prepareSQLMarkup(this, q, this.changedFields, sqlFields);
             
             // Inject SQL code to DB
             q.executeUpdate();

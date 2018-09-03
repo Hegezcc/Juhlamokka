@@ -19,6 +19,13 @@ public class Transaction extends DBObject {
     ));
     
     /**
+     * Foreign object info for smart database usage
+     */
+    protected ArrayList<String> foreignObjects = new ArrayList<>(Arrays.asList(
+            "product", "user", "client"
+    ));
+    
+    /**
      * Get a product by its identifier
      * @param id
      * @param db
