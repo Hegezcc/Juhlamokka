@@ -270,7 +270,6 @@ public class DBOperation {
      */
     public User getUserByCredentials(String username, char[] password) {
         User user = null;
-        
         try {
             ResultSet rs = read(new ArrayList<>(
                     Arrays.asList("id", "name", "description", "password", 

@@ -42,5 +42,7 @@ public class WebAPI extends Application {
         DBOperation dbo = new DBOperation(db);
         
         User user = dbo.getUserByCredentials(username, password);
+        
+        return null;
     }
 }

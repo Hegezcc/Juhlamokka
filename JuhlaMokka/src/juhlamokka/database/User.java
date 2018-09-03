@@ -88,6 +88,8 @@ public class User extends DBObject {
             Boolean admin, Boolean locked, Connection db) {
         preInit();
         
+        // We are creating a new object, set properties
+        
         this.id = id;
         this.name = name;
         this.description = description;
@@ -106,6 +108,14 @@ public class User extends DBObject {
         this.tableName = "users";
         
         addFields(this.ownFields);
+    }
+    
+    public String getpw() {
+        return this.password;
+    }
+    
+    public void setpw(String pw) {
+        this.password = pw;
     }
     
     /**

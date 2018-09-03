@@ -8,6 +8,7 @@ import juhlamokka.database.DBOperation;
 import juhlamokka.database.ObjectManager;
 import juhlamokka.database.Product;
 import juhlamokka.database.Transaction;
+import juhlamokka.database.User;
 
 /**
  * The main class of program
@@ -41,13 +42,18 @@ public class JuhlaMokka {
         );
         
         DBOperation dbo = new DBOperation(db.getConnection());
-        ArrayList<Transaction> transactions = dbo.getTransactions("1=1", -1);
+        ArrayList<User> users = dbo.getUsers("1=1", -1);
         
-        for (Transaction transaction : transactions) {
-        	transaction
-			.getUser().setLocked(true);
-        	transaction.getUser().update();
-		}
+        for (User user : users) {
+        	String pw = user.getpw();
+                String hash = defuse.passwordhashing.PasswordStorage.createHash(pw);
+                
+                user.setpw(hash);
+                
+                System.out.println(user.getName() + " " + pw + " " + hash);
+                
+                user.update();
+        }
         
         //System.out.println(String.join(",", ObjectManager.TRANSACTIONS.keySet().stream().map(e -> String.valueOf(e)).collect(Collectors.toSet())));
         
