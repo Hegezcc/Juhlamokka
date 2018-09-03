@@ -1,6 +1,8 @@
 package juhlamokka.database;
 
 import defuse.passwordhashing.PasswordStorage;
+
+import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
@@ -266,15 +268,16 @@ public class DBOperation {
      * Get a user by its username and password
      * @param username
      * @param password
+     * @param ipAddress
      * @return
      */
-    public User getUserByCredentials(String username, char[] password) {
+    public Login getUserLoginByCredentials(String username, char[] password, InetAddress ipAddress) {
         User user = null;
         try {
             ResultSet rs = read(new ArrayList<>(
                     Arrays.asList("id", "name", "description", "password", 
-                                  "admin", "locked")),
-                    "products", 
+                                  "isadmin", "islocked")),
+                    "users",
                     String.format("name = %s", username),
                     1
             );
@@ -286,8 +289,8 @@ public class DBOperation {
                             rs.getString("name"), 
                             rs.getString("description"), 
                             rs.getString("password"), 
-                            rs.getBoolean("admin"), 
-                            rs.getBoolean("locked"), 
+                            rs.getBoolean("isadmin"), 
+                            rs.getBoolean("islocked"), 
                             this.db
                     );
                 }
@@ -303,8 +306,10 @@ public class DBOperation {
         
         try {
             if (user == null || !user.checkPassword(password)) {
+            	new Login(ipAddress, user, false, db);
+            	
                 throw new IllegalArgumentException(
-                        String.format("User %s not found", username)
+                		String.format("User %s not found", username)
                 );
             }
         } catch (IllegalArgumentException | 
@@ -316,7 +321,9 @@ public class DBOperation {
             throw new NoSuchElementException("User not found");
         }
         
-        return user;
+        Login login = new Login(ipAddress, user, true, db);
+        
+		return login;
     }
     
     /**

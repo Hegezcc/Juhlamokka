@@ -41,8 +41,8 @@ public class WebAPI extends Application {
     public static String authenticateUser(String username, char[] password) {
         DBOperation dbo = new DBOperation(db);
         
-        User user = dbo.getUserByCredentials(username, password);
+        //User user = dbo.getUserByCredentials(username, password);
         
-        return null;
+        return "";
     }
 }

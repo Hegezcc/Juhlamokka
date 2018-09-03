@@ -207,7 +207,7 @@ public class User extends DBObject {
         
         try {
             String hash = sha1Hex(password);
-            String hashStart = hash.substring(0, 5);
+            String hashStart = hash.substring(0, 5); // 5 ensimmäistä merkkiä
             String hashEnd = hash.substring(5);
             
             URL url = new URL(String.format(

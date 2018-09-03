@@ -1,10 +1,15 @@
 package juhlamokka;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Random;
 import java.util.stream.Collectors;
 
+import defuse.passwordhashing.PasswordStorage;
 import juhlamokka.database.DBManager;
 import juhlamokka.database.DBOperation;
+import juhlamokka.database.Login;
 import juhlamokka.database.ObjectManager;
 import juhlamokka.database.Product;
 import juhlamokka.database.Transaction;
@@ -47,6 +52,12 @@ public class JuhlaMokka {
         for (User user : users) {
             System.out.println(user.getName());
         }
+       /* for (Transaction transaction : transactions) {
+        	transaction
+			.getUser().setLocked(true);
+        	transaction.getUser().update();
+		}
+        */
         
         /* Some initial password hashing code
         // Toni: tervehdys
@@ -65,6 +76,9 @@ public class JuhlaMokka {
         }
         */
         
+        char[] s = "blackhat".toCharArray();
+        Login l = dbo.getUserLoginByCredentials("Heikki", s, InetAddress.getLocalHost());
+
         //System.out.println(String.join(",", ObjectManager.TRANSACTIONS.keySet().stream().map(e -> String.valueOf(e)).collect(Collectors.toSet())));
         
         //CLIFrontend fe = new CLIFrontend();
