@@ -28,6 +28,11 @@ public class ObjectManager {
     public static final LinkedHashMap<Integer, Transaction> TRANSACTIONS = new LinkedHashMap<>();
     
     /**
+     * LinkedHashMap of all logins seen in the program, keys by id
+     */
+    public static final LinkedHashMap<Integer, Login> LOGINS = new LinkedHashMap<>();
+    
+    /**
      * Add or replace a product in the manager
      * @param p
      */
@@ -72,6 +77,18 @@ public class ObjectManager {
             TRANSACTIONS.put(t.id, t);
         } else if (!(TRANSACTIONS.get(t.id) == t)) {
             TRANSACTIONS.replace(t.id, t);
+        }
+    }
+    
+    /**
+     * Add or replace a login in the manager
+     * @param l
+     */
+    public void addLogin(Login l) {
+        if (!LOGINS.containsKey(l.id)) {
+        	LOGINS.put(l.id, l);
+        } else if (!(LOGINS.get(l.id) == l)) {
+        	LOGINS.replace(l.id, l);
         }
     }
 }

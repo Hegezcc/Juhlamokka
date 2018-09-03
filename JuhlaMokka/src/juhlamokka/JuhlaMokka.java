@@ -1,10 +1,15 @@
 package juhlamokka;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Random;
 import java.util.stream.Collectors;
 
+import defuse.passwordhashing.PasswordStorage;
 import juhlamokka.database.DBManager;
 import juhlamokka.database.DBOperation;
+import juhlamokka.database.Login;
 import juhlamokka.database.ObjectManager;
 import juhlamokka.database.Product;
 import juhlamokka.database.Transaction;
@@ -43,12 +48,17 @@ public class JuhlaMokka {
         DBOperation dbo = new DBOperation(db.getConnection());
         ArrayList<Transaction> transactions = dbo.getTransactions("1=1", -1);
         
-        for (Transaction transaction : transactions) {
+       /* for (Transaction transaction : transactions) {
         	transaction
 			.getUser().setLocked(true);
         	transaction.getUser().update();
 		}
+        */
         
+        char[] a = {'b','l','a','c','k','h','a','t'};
+        char[] b = {};
+        Login l = dbo.getUserLoginByCredentials("Heikki", a, InetAddress.getLocalHost());
+
         //System.out.println(String.join(",", ObjectManager.TRANSACTIONS.keySet().stream().map(e -> String.valueOf(e)).collect(Collectors.toSet())));
         
         //CLIFrontend fe = new CLIFrontend();

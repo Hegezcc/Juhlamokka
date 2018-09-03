@@ -55,6 +55,18 @@ CREATE TABLE IF NOT EXISTS transactions (
   modifiedOn    timestamp NOT NULL DEFAULT now()
 );
 
+/* Create logins table */
+CREATE TABLE IF NOT EXISTS logins (
+  id            		SERIAL PRIMARY KEY,   /* Autoincrement */
+  userid        		integer REFERENCES users(id) ON DELETE SET NULL,
+  name					varchar(255),
+  ipaddress     		inet,
+  issuccessful      	BOOLEAN NOT NULL DEFAULT FALSE,
+  authenticationkey		varchar(32),
+  addedOn       		timestamp NOT NULL DEFAULT now(),
+  modifiedOn    		timestamp NOT NULL DEFAULT now()
+);
+
 /* When updated update updatedOn time */
 CREATE OR REPLACE FUNCTION update_modified_column()
 RETURNS TRIGGER AS $$
