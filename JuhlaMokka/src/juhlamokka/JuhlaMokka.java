@@ -2,17 +2,9 @@ package juhlamokka;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Random;
-import java.util.stream.Collectors;
-
-import defuse.passwordhashing.PasswordStorage;
 import juhlamokka.database.DBManager;
 import juhlamokka.database.DBOperation;
 import juhlamokka.database.Login;
-import juhlamokka.database.ObjectManager;
-import juhlamokka.database.Product;
-import juhlamokka.database.Transaction;
 import juhlamokka.database.User;
 
 /**
@@ -65,10 +57,12 @@ public class JuhlaMokka {
         // Heikki: blackhat
         
         for (User user : users) {
-        	String pw = user.getpw();
-                String hash = defuse.passwordhashing.PasswordStorage.createHash(pw);
+        	String pw = user.getpw(); // This was some legacy hacking
+                                          // Do not long for it
+                String hash = defuse.passwordhashing
+                                    .PasswordStorage.createHash(pw);
                 
-                user.setpw(hash);
+                user.setpw(hash); // This was legacy hacking too
                 
                 System.out.println(user.getName() + " " + pw + " " + hash);
                 

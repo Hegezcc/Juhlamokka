@@ -14,8 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.sql.rowset.CachedRowSet;
-
-import com.sun.rowset.CachedRowSetImpl;
+import javax.sql.rowset.RowSetProvider;
 
 /**
  * Do extensive database operations
@@ -361,7 +360,7 @@ public class DBOperation {
                 System.out.println(rs.getString("name") + ", " + rs.getString("description"));
             }*/
             
-            CachedRowSet crs = new CachedRowSetImpl();
+            CachedRowSet crs = RowSetProvider.newFactory().createCachedRowSet();
             crs.populate(rs);
             rs.close();
             
