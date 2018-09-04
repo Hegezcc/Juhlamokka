@@ -101,16 +101,6 @@ public class Login extends DBObject {
     
     private User user;
 
-    private void preInit() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private void postInit() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    private boolean isSuccessful;
-    
     private char[] createAuthenticationKey() {
     	char[] authenticationKey = new char[32];
     	
